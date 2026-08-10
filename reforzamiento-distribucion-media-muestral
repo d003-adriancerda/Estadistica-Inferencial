@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividad: Distribución Muestral de la Media</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e67e22;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --gray: #95a5a6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 850px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; }
+        header { background: var(--primary); color: #fff; padding: 25px; text-align: center; }
+        header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        header h2 { font-size: 1.1rem; font-weight: 400; opacity: 0.9; }
+        section { padding: 25px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; }
+        input[type="text"], input[type="date"] { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 1rem; margin-bottom: 10px; box-sizing: border-box; }
+        .btn { display: inline-block; background: var(--secondary); color: #fff; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background 0.3s; width: 100%; margin-top: 10px; }
+        .btn:hover { background: #d35400; }
+        .btn:disabled { background: var(--gray); cursor: not-allowed; }
+        .btn-next { background: var(--primary); }
+        .btn-next:hover { background: #1a252f; }
+
+        .stats-bar { display: flex; justify-content: space-between; background: #f8f9fa; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; flex-wrap: wrap; gap: 10px; }
+        .stat-item span { color: var(--secondary); }
+        .progress-container { height: 8px; background: #e0e0e0; border-radius: 4px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.4s ease; }
+
+        .question-box { margin-bottom: 20px; }
+        .question-text { font-size: 1.1rem; margin-bottom: 20px; font-weight: 500; background: #fdfefe; padding: 15px; border-radius: 8px; border-left: 5px solid var(--secondary); }
+        .options { display: grid; gap: 8px; }
+        .option-btn { padding: 12px; background: #fff; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.2s; font-size: 1rem; width: 100%; }
+        .option-btn:hover:not(.disabled) { border-color: var(--secondary); background: #fef5e7; }
+        .option-btn.selected { border-color: var(--secondary); background: #fdebd0; font-weight: 600; }
+        .option-btn.correct { border-color: var(--success); background: #d5f5e3; }
+        .option-btn.incorrect { border-color: var(--danger); background: #fadbd8; }
+        .option-btn.disabled { pointer-events: none; opacity: 0.7; }
+
+        .feedback { margin-top: 15px; padding: 12px; border-radius: 6px; display: none; }
+        .feedback.correct { background: #d5f5e3; color: #145a32; border: 1px solid #27ae60; }
+        .feedback.incorrect { background: #fadbd8; color: #7b241c; border: 1px solid #e74c3c; }
+
+        .results-box { text-align: center; }
+        .score-circle { width: 120px; height: 120px; background: var(--secondary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; margin: 20px auto; }
+        .hidden { display: none !important; }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            section { padding: 15px; }
+            .option-btn { font-size: 0.95rem; padding: 10px; }
+            .stats-bar { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Actividad de Reforzamiento</h1>
+        <h2>Estadística Inferencial | Distribución Muestral de la Media</h2>
+    </header>
+
+    <section id="registro">
+        <div class="form-group">
+            <label for="nombre">Nombre del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Tu nombre completo">
+            <label for="fecha">Fecha de Realización</label>
+            <input type="date" id="fecha">
+        </div>
+        <button class="btn" onclick="startQuiz()">Iniciar Evaluación</button>
+    </section>
+
+    <section id="actividad" class="hidden">
+        <div class="stats-bar">
+            <div class="stat-item">✅ <span id="correct-count">0</span></div>
+            <div class="stat-item">❌ <span id="error-count">0</span>/3</div>
+            <div class="stat-item">📊 <span id="progress-pct">0%</span></div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div id="question-container">
+            <div class="question-box">
+                <p class="question-text" id="q-text"></p>
+                <div class="options" id="options-container"></div>
+                <div id="feedback" class="feedback"></div>
+            </div>
+            <button class="btn btn-next" id="btn-next" onclick="nextQuestion()" disabled>Siguiente</button>
+        </div>
+    </section>
+
+    <section id="resultados" class="hidden">
+        <div class="results-box">
+            <h2>Resultado para <span id="student-name-display"></span></h2>
+            <div class="score-circle" id="final-score">0%</div>
+            <div id="personal-message" style="margin: 20px 0; font-size: 1.1rem;"></div>
+            <button class="btn" onclick="location.reload()">Reiniciar Actividad</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    // 20 ejercicios sobre Distribución Muestral de la Media
+    const questions = [
+        // ==================== TEOREMA CENTRAL DEL LÍMITE ====================
+        {
+            q: "El teorema central del límite establece que, para muestras de tamaño suficientemente grande (\(n \\ge 30\)), la distribución muestral de la media se aproxima a una distribución:",
+            options: ["Normal", "Binomial", "Poisson", "t-Student"],
+            correct: 0,
+            explanation: "El TCL establece que la distribución de las medias muestrales tiende a una normal, independientemente de la forma de la población original."
+        },
+        {
+            q: "Si la población es normal, ¿qué podemos afirmar sobre la distribución muestral de la media para cualquier tamaño de muestra?",
+            options: ["Es normal", "Es aproximadamente normal solo si \(n \\ge 30\)", "Es uniforme", "Es binomial"],
+            correct: 0,
+            explanation: "Si la población es normal, la distribución muestral de la media es exactamente normal, sin importar el tamaño de la muestra."
+        },
+        {
+            q: "¿Cuál es el valor esperado (media) de la distribución muestral de la media (\(\\mu_{\\bar{x}}\\))?",
+            options: ["\(\\mu\)", "\(\\sigma\)", "\(\\frac{\\sigma}{\\sqrt{n}}\)", "\(\\mu^2\)"],
+            correct: 0,
+            explanation: "La media de la distribución muestral de la media es igual a la media poblacional \(\\mu\). Es un estimador insesgado."
+        },
+        {
+            q: "¿Cómo se calcula el error estándar de la media (\(\\sigma_{\\bar{x}}\\))?",
+            options: ["\(\\frac{\\sigma}{\\sqrt{n}}\)", "\(\\frac{\\sigma}{n}\)", "\(\\frac{\\sigma^2}{n}\)", "\(\\frac{\\mu}{\\sqrt{n}}\)"],
+            correct: 0,
+            explanation: "El error estándar de la media es la desviación estándar de la distribución muestral y se calcula como \(\\sigma_{\\bar{x}} = \\frac{\\sigma}{\\sqrt{n}}\)."
+        },
+
+        // ==================== CÁLCULO DE PROBABILIDADES ====================
+        {
+            q: "Las calificaciones de un examen tienen media 75 y desviación estándar 10. Si se toma una muestra de 40 estudiantes, ¿cuál es la probabilidad de que la media muestral sea mayor a 78? (Aprox. Z = 1.90)",
+            options: ["0.0287", "0.9713", "0.5000", "0.3821"],
+            correct: 0,
+            explanation: "Z = (78-75)/(10/√40) = 3/1.58 = 1.90. P(Z > 1.90) = 1 - 0.9713 = 0.0287."
+        },
+        {
+            q: "Una población tiene media \(\\mu = 50\) y desviación \(\\sigma = 15\). ¿Cuál es la probabilidad de que la media de una muestra de \(n=25\) sea menor que 45? (Aprox. Z = -1.67)",
+            options: ["0.0475", "0.9525", "0.5000", "0.2033"],
+            correct: 0,
+            explanation: "Z = (45-50)/(15/√25) = -5/3 = -1.67. P(Z < -1.67) = 0.0475."
+        },
+        {
+            q: "El peso de un producto tiene media 500g y desviación 20g. Si se toman 100 productos, ¿cuál es la probabilidad de que el peso promedio esté entre 497g y 503g? (Aprox. Z = ±1.5)",
+            options: ["0.8664", "0.1336", "0.5000", "0.6826"],
+            correct: 0,
+            explanation: "Z = (497-500)/(20/10) = -1.5; Z = (503-500)/2 = 1.5. P(-1.5 < Z < 1.5) = 0.9332 - 0.0668 = 0.8664."
+        },
+        {
+            q: "Para una población con media 100 y desviación 25, ¿cuál es la probabilidad de que la media de una muestra de 50 sea mayor que 105? (Aprox. Z = 1.41)",
+            options: ["0.0793", "0.9207", "0.5000", "0.1593"],
+            correct: 0,
+            explanation: "Z = (105-100)/(25/√50) = 5/3.54 = 1.41. P(Z > 1.41) = 1 - 0.9207 = 0.0793."
+        },
+
+        // ==================== EFECTO DEL TAMAÑO DE MUESTRA ====================
+        {
+            q: "Si el tamaño de la muestra se cuadruplica (de \(n\) a \(4n\)), ¿qué ocurre con el error estándar de la media?",
+            options: ["Se reduce a la mitad", "Se duplica", "Se reduce a la cuarta parte", "No cambia"],
+            correct: 0,
+            explanation: "El error estándar es \(\\sigma/\\sqrt{n}\). Si \(n\) se cuadruplica, \(\\sqrt{4n} = 2\\sqrt{n}\), por lo que el error estándar se reduce a la mitad."
+        },
+        {
+            q: "¿Qué sucede con la forma de la distribución muestral de la media a medida que aumenta el tamaño de la muestra?",
+            options: ["Se vuelve más normal", "Se vuelve más uniforme", "Se vuelve sesgada", "No cambia"],
+            correct: 0,
+            explanation: "El TCL indica que al aumentar el tamaño de muestra, la distribución muestral se aproxima más a una normal, incluso si la población no lo es."
+        },
+        {
+            q: "Para una población con desviación estándar \(\\sigma = 40\), ¿qué tamaño de muestra se necesita para que el error estándar sea 5?",
+            options: ["64", "32", "16", "8"],
+            correct: 0,
+            explanation: "\(\\sigma_{\\bar{x}} = \\sigma/\\sqrt{n} \\Rightarrow 5 = 40/\\sqrt{n} \\Rightarrow \\sqrt{n} = 8 \\Rightarrow n = 64\)."
+        },
+        {
+            q: "Al aumentar el tamaño de la muestra, ¿qué efecto tiene sobre la probabilidad de que la media muestral se acerque a la media poblacional?",
+            options: ["Aumenta la probabilidad", "Disminuye la probabilidad", "No tiene efecto", "Depende de la población"],
+            correct: 0,
+            explanation: "Con muestras más grandes, la variabilidad de la media muestral disminuye, por lo que es más probable que esté cerca de la media poblacional."
+        },
+
+        // ==================== APLICACIONES CON INTERVALOS ====================
+        {
+            q: "Un proceso produce piezas con media 10 cm y desviación 0.5 cm. Si se toman muestras de 25 piezas, ¿cuál es la probabilidad de que la media muestral esté a menos de 0.1 cm de la media poblacional? (Aprox. Z = ±1.0)",
+            options: ["0.6826", "0.1587", "0.3413", "0.9544"],
+            correct: 0,
+            explanation: "Z = 0.1/(0.5/5) = 0.1/0.1 = 1.0. P(-1 < Z < 1) = 0.6826."
+        },
+        {
+            q: "Las facturas de electricidad tienen media $120 y desviación $30. Si se toma una muestra de 36 hogares, ¿cuál es la probabilidad de que la media muestral supere los $130? (Aprox. Z = 2.0)",
+            options: ["0.0228", "0.9772", "0.5000", "0.0456"],
+            correct: 0,
+            explanation: "Z = (130-120)/(30/6) = 10/5 = 2.0. P(Z > 2.0) = 0.0228."
+        },
+        {
+            q: "El tiempo de vida de un componente tiene media 1000 horas y desviación 200 horas. Si se prueban 64 componentes, ¿cuál es la probabilidad de que la duración media sea menor a 950 horas? (Aprox. Z = -2.0)",
+            options: ["0.0228", "0.9772", "0.5000", "0.0456"],
+            correct: 0,
+            explanation: "Z = (950-1000)/(200/8) = -50/25 = -2.0. P(Z < -2.0) = 0.0228."
+        },
+        {
+            q: "Un banco tiene clientes con saldo promedio $5000 y desviación $800. Si se toma una muestra de 49 clientes, ¿cuál es la probabilidad de que el saldo promedio esté entre $4800 y $5200? (Aprox. Z = ±1.75)",
+            options: ["0.9198", "0.0802", "0.5000", "0.6826"],
+            correct: 0,
+            explanation: "Z = (4800-5000)/(800/7) = -200/114.3 = -1.75; Z = 200/114.3 = 1.75. P(-1.75 < Z < 1.75) = 0.9599 - 0.0401 = 0.9198."
+        },
+
+        // ==================== CONCEPTOS FUNDAMENTALES ====================
+        {
+            q: "¿Qué representa la distribución muestral de la media?",
+            options: ["La distribución de todas las medias posibles de muestras de un mismo tamaño", "La distribución de los datos originales", "La distribución de una sola muestra", "La distribución de las desviaciones estándar"],
+            correct: 0,
+            explanation: "La distribución muestral de la media es la distribución de probabilidad de todas las medias posibles que se pueden obtener de muestras del mismo tamaño."
+        },
+        {
+            q: "¿Qué condición es necesaria para aplicar correctamente el teorema central del límite?",
+            options: ["\(n \\ge 30\)", "La población debe ser normal", "La población debe ser uniforme", "\(\\sigma\) debe ser conocida"],
+            correct: 0,
+            explanation: "El TCL se aplica para muestras grandes (\(n \\ge 30\)), aunque también funciona para muestras más pequeñas si la población es normal."
+        },
+        {
+            q: "Si \(\\mu_{\\bar{x}} = 75\) y \(\\sigma_{\\bar{x}} = 2.5\), ¿cuál es el valor de la varianza de la distribución muestral?",
+            options: ["6.25", "2.5", "1.58", "75"],
+            correct: 0,
+            explanation: "La varianza de la distribución muestral es el cuadrado del error estándar: \(2.5^2 = 6.25\)."
+        },
+        {
+            q: "Para una población con media \(\\mu\) y desviación \(\\sigma\), la media de la distribución muestral de la media es:",
+            options: ["\(\\mu\)", "\(\\sigma\)", "\(\\mu/n\)", "\(\\sigma/\\sqrt{n}\)"],
+            correct: 0,
+            explanation: "La media de la distribución muestral es igual a la media poblacional \(\\mu\)."
+        },
+        {
+            q: "El error estándar de la media mide:",
+            options: ["La variabilidad de las medias muestrales alrededor de la media poblacional", "La variabilidad de los datos individuales", "La media de la muestra", "La desviación estándar de la población"],
+            correct: 0,
+            explanation: "El error estándar mide cuánto varían las medias muestrales entre sí y alrededor de la media poblacional."
+        },
+        {
+            q: "¿Cuál de las siguientes afirmaciones es correcta sobre la distribución muestral de la media?",
+            options: ["Su desviación estándar disminuye al aumentar \(n\)", "Su desviación estándar aumenta al aumentar \(n\)", "Su media aumenta al aumentar \(n\)", "Su forma siempre es normal"],
+            correct: 0,
+            explanation: "La desviación estándar de la distribución muestral es \(\\sigma/\\sqrt{n}\), que disminuye al aumentar el tamaño de muestra."
+        }
+    ];
+
+    let currentQ = 0;
+    let correctCount = 0;
+    let errorCount = 0;
+    let studentName = "";
+    let answered = false;
+    const MAX_ERRORS = 3;
+
+    // Fecha por defecto
+    const fechaInput = document.getElementById('fecha');
+    if (fechaInput) {
+        const hoy = new Date();
+        fechaInput.value = hoy.toISOString().split('T')[0];
+    }
+
+    function startQuiz() {
+        const nameInput = document.getElementById('nombre').value.trim();
+        const dateInput = document.getElementById('fecha').value;
+        if(!nameInput || !dateInput) {
+            alert("Por favor, ingresa tu nombre y la fecha.");
+            return;
+        }
+        studentName = nameInput;
+        document.getElementById('registro').classList.add('hidden');
+        document.getElementById('actividad').classList.remove('hidden');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        answered = false;
+        const q = questions[currentQ];
+        document.getElementById('q-text').innerHTML = `<strong>Pregunta ${currentQ + 1} de ${questions.length}:</strong><br>${q.q}`;
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        q.options.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = opt;
+            btn.onclick = () => selectOption(i, btn);
+            container.appendChild(btn);
+        });
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('btn-next').disabled = true;
+        updateStats();
+
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise();
+        }
+    }
+
+    function selectOption(index, btn) {
+        if(answered) return;
+        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        document.getElementById('btn-next').disabled = false;
+        btn.dataset.index = index;
+    }
+
+    function nextQuestion() {
+        if(!answered) {
+            const selected = document.querySelector('.option-btn.selected');
+            if(!selected) {
+                alert("Por favor, selecciona una respuesta antes de continuar.");
+                return;
+            }
+            const idx = parseInt(selected.dataset.index);
+            checkAnswer(idx);
+            answered = true;
+            document.getElementById('btn-next').innerText = (currentQ < questions.length - 1) ? "Siguiente Pregunta" : "Finalizar";
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        } else {
+            currentQ++;
+            if(currentQ < questions.length) {
+                loadQuestion();
+                document.getElementById('btn-next').innerText = "Siguiente";
+            } else {
+                showResults();
+            }
+        }
+    }
+
+    function checkAnswer(selectedIdx) {
+        const q = questions[currentQ];
+        const isCorrect = selectedIdx === q.correct;
+        const feedback = document.getElementById('feedback');
+        const btns = document.querySelectorAll('.option-btn');
+
+        btns.forEach(b => b.classList.add('disabled'));
+        btns[q.correct].classList.add('correct');
+
+        if(isCorrect) {
+            correctCount++;
+            feedback.className = "feedback correct";
+            feedback.innerHTML = "<strong>¡Excelente!</strong> " + q.explanation;
+        } else {
+            errorCount++;
+            btns[selectedIdx].classList.add('incorrect');
+            feedback.className = "feedback incorrect";
+            feedback.innerHTML = "<strong>Incorrecto.</strong> " + q.explanation;
+
+            if(errorCount >= MAX_ERRORS) {
+                setTimeout(() => {
+                    alert(`Has alcanzado el límite de ${MAX_ERRORS} errores. Te recomendamos repasar: el teorema central del límite, el cálculo del error estándar y la interpretación de la distribución muestral de la media.`);
+                    location.reload();
+                }, 1500);
+            }
+        }
+        feedback.style.display = 'block';
+        updateStats();
+    }
+
+    function updateStats() {
+        document.getElementById('correct-count').innerText = correctCount;
+        document.getElementById('error-count').innerText = errorCount;
+        const prog = Math.round((currentQ / questions.length) * 100);
+        document.getElementById('progress-pct').innerText = prog + "%";
+        document.getElementById('progress-bar').style.width = prog + "%";
+    }
+
+    function showResults() {
+        document.getElementById('actividad').classList.add('hidden');
+        document.getElementById('resultados').classList.remove('hidden');
+        document.getElementById('student-name-display').innerText = studentName;
+        const score = Math.round((correctCount / questions.length) * 100);
+        document.getElementById('final-score').innerText = score + "%";
+
+        let msg = score >= 80 ?
+            "¡Excelente trabajo! Dominas los conceptos de la distribución muestral de la media, el teorema central del límite y el cálculo de probabilidades asociadas." :
+            "Buen esfuerzo. Te sugerimos repasar: el teorema central del límite, la fórmula del error estándar \(\\sigma_{\\bar{x}} = \\sigma/\\sqrt{n}\), y cómo calcular probabilidades usando la distribución normal estándar.";
+        document.getElementById('personal-message').innerText = msg;
+    }
+</script>
+</body>
+</html>
