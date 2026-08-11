@@ -124,28 +124,28 @@
     const questions = [
         // ==================== TEOREMA CENTRAL DEL LÍMITE ====================
         {
-            q: "El teorema central del límite establece que, para muestras de tamaño suficientemente grande (\(n \\geq 30\)), la distribución muestral de la media se aproxima a una distribución:",
+            q: "El teorema central del límite establece que, para muestras de tamaño suficientemente grande (\\(n \\geq 30\\)), la distribución muestral de la media se aproxima a una distribución:",
             options: ["Normal", "Binomial", "Poisson", "t-Student"],
             correct: 0,
             explanation: "El TCL establece que la distribución de las medias muestrales tiende a una normal, independientemente de la forma de la población original."
         },
         {
             q: "Si la población es normal, ¿qué podemos afirmar sobre la distribución muestral de la media para cualquier tamaño de muestra?",
-            options: ["Es normal", "Es aproximadamente normal solo si \(n \\ge 30\)", "Es uniforme", "Es binomial"],
+            options: ["Es normal", "Es aproximadamente normal solo si \\(n \\ge 30\\)", "Es uniforme", "Es binomial"],
             correct: 0,
             explanation: "Si la población es normal, la distribución muestral de la media es exactamente normal, sin importar el tamaño de la muestra."
         },
         {
-            q: "¿Cuál es el valor esperado (media) de la distribución muestral de la media (\(\\mu_{\\bar{x}}\\))?",
-            options: ["\(\\mu\)", "\(\\sigma\)", "\(\\frac{\\sigma}{\\sqrt{n}}\)", "\(\\mu^2\)"],
+            q: "¿Cuál es el valor esperado (media) de la distribución muestral de la media (\\(\\mu_{\\bar{x}}\\))?",
+            options: ["\\(\\mu\\)", "\\(\\sigma\\)", "\\(\\frac{\\sigma}{\\sqrt{n}}\\)", "\\(\\mu^2\\)"],
             correct: 0,
-            explanation: "La media de la distribución muestral de la media es igual a la media poblacional \(\\mu\). Es un estimador insesgado."
+            explanation: "La media de la distribución muestral de la media es igual a la media poblacional \\(\\mu\\). Es un estimador insesgado."
         },
         {
-            q: "¿Cómo se calcula el error estándar de la media (\(\\sigma_{\\bar{x}}\\))?",
-            options: ["\(\\frac{\\sigma}{\\sqrt{n}}\)", "\(\\frac{\\sigma}{n}\)", "\(\\frac{\\sigma^2}{n}\)", "\(\\frac{\\mu}{\\sqrt{n}}\)"],
+            q: "¿Cómo se calcula el error estándar de la media (\\(\\sigma_{\\bar{x}}\\))?",
+            options: ["\\(\\frac{\\sigma}{\\sqrt{n}}\\)", "\\(\\frac{\\sigma}{n}\\)", "\\(\\frac{\\sigma^2}{n}\\)", "\\(\\frac{\\mu}{\\sqrt{n}}\\)"],
             correct: 0,
-            explanation: "El error estándar de la media es la desviación estándar de la distribución muestral y se calcula como \(\\sigma_{\\bar{x}} = \\frac{\\sigma}{\\sqrt{n}}\)."
+            explanation: "El error estándar de la media es la desviación estándar de la distribución muestral y se calcula como \\(\\sigma_{\\bar{x}} = \\frac{\\sigma}{\\sqrt{n}}\\)."
         },
 
         // ==================== CÁLCULO DE PROBABILIDADES ====================
@@ -156,7 +156,7 @@
             explanation: "Z = (78-75)/(10/√40) = 3/1.58 = 1.90. P(Z > 1.90) = 1 - 0.9713 = 0.0287."
         },
         {
-            q: "Una población tiene media \(\\mu = 50\) y desviación \(\\sigma = 15\). ¿Cuál es la probabilidad de que la media de una muestra de \(n=25\) sea menor que 45? (Aprox. Z = -1.67)",
+            q: "Una población tiene media \\(\\mu = 50\\) y desviación \\(\\sigma = 15\\). ¿Cuál es la probabilidad de que la media de una muestra de \\(n=25\\) sea menor que 45? (Aprox. Z = -1.67)",
             options: ["0.0475", "0.9525", "0.5000", "0.2033"],
             correct: 0,
             explanation: "Z = (45-50)/(15/√25) = -5/3 = -1.67. P(Z < -1.67) = 0.0475."
@@ -176,10 +176,10 @@
 
         // ==================== EFECTO DEL TAMAÑO DE MUESTRA ====================
         {
-            q: "Si el tamaño de la muestra se cuadruplica (de \(n\) a \(4n\)), ¿qué ocurre con el error estándar de la media?",
+            q: "Si el tamaño de la muestra se cuadruplica (de \\(n\\) a \\(4n\\)), ¿qué ocurre con el error estándar de la media?",
             options: ["Se reduce a la mitad", "Se duplica", "Se reduce a la cuarta parte", "No cambia"],
             correct: 0,
-            explanation: "El error estándar es \(\\sigma/\\sqrt{n}\). Si \(n\) se cuadruplica, \(\\sqrt{4n} = 2\\sqrt{n}\), por lo que el error estándar se reduce a la mitad."
+            explanation: "El error estándar es \\(\\sigma/\\sqrt{n}\\). Si \\(n\\) se cuadruplica, \\(\\sqrt{4n} = 2\\sqrt{n}\\), por lo que el error estándar se reduce a la mitad."
         },
         {
             q: "¿Qué sucede con la forma de la distribución muestral de la media a medida que aumenta el tamaño de la muestra?",
@@ -188,10 +188,10 @@
             explanation: "El TCL indica que al aumentar el tamaño de muestra, la distribución muestral se aproxima más a una normal, incluso si la población no lo es."
         },
         {
-            q: "Para una población con desviación estándar \(\\sigma = 40\), ¿qué tamaño de muestra se necesita para que el error estándar sea 5?",
+            q: "Para una población con desviación estándar \\(\\sigma = 40\\), ¿qué tamaño de muestra se necesita para que el error estándar sea 5?",
             options: ["64", "32", "16", "8"],
             correct: 0,
-            explanation: "\(\\sigma_{\\bar{x}} = \\sigma/\\sqrt{n} \\Rightarrow 5 = 40/\\sqrt{n} \\Rightarrow \\sqrt{n} = 8 \\Rightarrow n = 64\)."
+            explanation: "\\(\\sigma_{\\bar{x}} = \\sigma/\\sqrt{n} \\Rightarrow 5 = 40/\\sqrt{n} \\Rightarrow \\sqrt{n} = 8 \\Rightarrow n = 64\\)."
         },
         {
             q: "Al aumentar el tamaño de la muestra, ¿qué efecto tiene sobre la probabilidad de que la media muestral se acerque a la media poblacional?",
@@ -235,21 +235,21 @@
         },
         {
             q: "¿Qué condición es necesaria para aplicar correctamente el teorema central del límite?",
-            options: ["\(n \\ge 30\)", "La población debe ser normal", "La población debe ser uniforme", "\(\\sigma\) debe ser conocida"],
+            options: ["\\(n \\ge 30\\)", "La población debe ser normal", "La población debe ser uniforme", "\\(\\sigma\\) debe ser conocida"],
             correct: 0,
-            explanation: "El TCL se aplica para muestras grandes (\(n \\ge 30\)), aunque también funciona para muestras más pequeñas si la población es normal."
+            explanation: "El TCL se aplica para muestras grandes (\\(n \\ge 30\\)), aunque también funciona para muestras más pequeñas si la población es normal."
         },
         {
-            q: "Si \(\\mu_{\\bar{x}} = 75\) y \(\\sigma_{\\bar{x}} = 2.5\), ¿cuál es el valor de la varianza de la distribución muestral?",
+            q: "Si \\(\\mu_{\\bar{x}} = 75\\) y \\(\\sigma_{\\bar{x}} = 2.5\\), ¿cuál es el valor de la varianza de la distribución muestral?",
             options: ["6.25", "2.5", "1.58", "75"],
             correct: 0,
-            explanation: "La varianza de la distribución muestral es el cuadrado del error estándar: \(2.5^2 = 6.25\)."
+            explanation: "La varianza de la distribución muestral es el cuadrado del error estándar: \\(2.5^2 = 6.25\\)."
         },
         {
-            q: "Para una población con media \(\\mu\) y desviación \(\\sigma\), la media de la distribución muestral de la media es:",
-            options: ["\(\\mu\)", "\(\\sigma\)", "\(\\mu/n\)", "\(\\sigma/\\sqrt{n}\)"],
+            q: "Para una población con media \\(\\mu\\) y desviación \\(\\sigma\\), la media de la distribución muestral de la media es:",
+            options: ["\\(\\mu\\)", "\\(\\sigma\\)", "\\(\\mu/n\\)", "\\(\\sigma/\\sqrt{n}\\)"],
             correct: 0,
-            explanation: "La media de la distribución muestral es igual a la media poblacional \(\\mu\)."
+            explanation: "La media de la distribución muestral es igual a la media poblacional \\(\\mu\\)."
         },
         {
             q: "El error estándar de la media mide:",
@@ -259,9 +259,9 @@
         },
         {
             q: "¿Cuál de las siguientes afirmaciones es correcta sobre la distribución muestral de la media?",
-            options: ["Su desviación estándar disminuye al aumentar \(n\)", "Su desviación estándar aumenta al aumentar \(n\)", "Su media aumenta al aumentar \(n\)", "Su forma siempre es normal"],
+            options: ["Su desviación estándar disminuye al aumentar \\(n\\)", "Su desviación estándar aumenta al aumentar \\(n\\)", "Su media aumenta al aumentar \\(n\\)", "Su forma siempre es normal"],
             correct: 0,
-            explanation: "La desviación estándar de la distribución muestral es \(\\sigma/\\sqrt{n}\), que disminuye al aumentar el tamaño de muestra."
+            explanation: "La desviación estándar de la distribución muestral es \\(\\sigma/\\sqrt{n}\\), que disminuye al aumentar el tamaño de muestra."
         }
     ];
 
@@ -395,7 +395,7 @@
 
         let msg = score >= 80 ?
             "¡Excelente trabajo! Dominas los conceptos de la distribución muestral de la media, el teorema central del límite y el cálculo de probabilidades asociadas." :
-            "Buen esfuerzo. Te sugerimos repasar: el teorema central del límite, la fórmula del error estándar \(\\sigma_{\\bar{x}} = \\sigma/\\sqrt{n}\), y cómo calcular probabilidades usando la distribución normal estándar.";
+            "Buen esfuerzo. Te sugerimos repasar: el teorema central del límite, la fórmula del error estándar \\(\\sigma_{\\bar{x}} = \\sigma/\\sqrt{n}\\), y cómo calcular probabilidades usando la distribución normal estándar.";
         document.getElementById('personal-message').innerText = msg;
     }
 </script>
