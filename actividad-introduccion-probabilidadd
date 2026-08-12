@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividad: Probabilidad y Estadística - Teoría de Conjuntos y Técnicas de Conteo</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --primary: #1C362E;
+            --secondary: #B5651D;
+            --success: #1F4D2B;
+            --danger: #333399;
+            --gray: #95a5a6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 850px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; }
+        header { background: var(--primary); color: #fff; padding: 25px; text-align: center; }
+        header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        header h2 { font-size: 1.1rem; font-weight: 400; opacity: 0.9; }
+        section { padding: 25px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; }
+        input[type="text"], input[type="date"] { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 1rem; margin-bottom: 10px; box-sizing: border-box; }
+        .btn { display: inline-block; background: var(--secondary); color: #fff; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background 0.3s; width: 100%; margin-top: 10px; }
+        .btn:hover { background: #965418; }
+        .btn:disabled { background: var(--gray); cursor: not-allowed; }
+        .btn-next { background: var(--primary); }
+        .btn-next:hover { background: #0F1F1A; }
+
+        .stats-bar { display: flex; justify-content: space-between; background: #f8f9fa; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; flex-wrap: wrap; gap: 10px; }
+        .stat-item span { color: var(--secondary); }
+        .progress-container { height: 8px; background: #e0e0e0; border-radius: 4px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.4s ease; }
+
+        .question-box { margin-bottom: 20px; }
+        .question-text { font-size: 1.1rem; margin-bottom: 20px; font-weight: 500; background: #fdfefe; padding: 15px; border-radius: 8px; border-left: 5px solid var(--secondary); }
+        .options { display: grid; gap: 8px; }
+        .option-btn { padding: 12px; background: #fff; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.2s; font-size: 1rem; width: 100%; }
+        .option-btn:hover:not(.disabled) { border-color: var(--secondary); background: #fef5e7; }
+        .option-btn.selected { border-color: var(--secondary); background: #fdebd0; font-weight: 600; }
+        .option-btn.correct { border-color: var(--success); background: #e8f5e9; color: var(--success); }
+        .option-btn.incorrect { border-color: var(--danger); background: #e8eaf6; color: var(--danger); }
+        .option-btn.disabled { pointer-events: none; opacity: 0.7; }
+
+        .feedback { margin-top: 15px; padding: 12px; border-radius: 6px; display: none; }
+        .feedback.correct { background: #e8f5e9; color: var(--success); border: 1px solid var(--success); }
+        .feedback.incorrect { background: #e8eaf6; color: var(--danger); border: 1px solid var(--danger); }
+
+        .results-box { text-align: center; }
+        .score-circle { width: 120px; height: 120px; background: var(--secondary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; margin: 20px auto; }
+        .hidden { display: none !important; }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            section { padding: 15px; }
+            .option-btn { font-size: 0.95rem; padding: 10px; }
+            .stats-bar { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Actividad de Reforzamiento</h1>
+        <h2>Probabilidad y Estadística | Teoría de Conjuntos y Técnicas de Conteo</h2>
+    </header>
+
+    <section id="registro">
+        <div class="form-group">
+            <label for="nombre">Nombre del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Tu nombre completo">
+            <label for="fecha">Fecha de Realización</label>
+            <input type="date" id="fecha">
+        </div>
+        <button class="btn" onclick="startQuiz()">Iniciar Evaluación</button>
+    </section>
+
+    <section id="actividad" class="hidden">
+        <div class="stats-bar">
+            <div class="stat-item">✅ <span id="correct-count">0</span></div>
+            <div class="stat-item">❌ <span id="error-count">0</span>/3</div>
+            <div class="stat-item">📊 <span id="progress-pct">0%</span></div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div id="question-container">
+            <div class="question-box">
+                <p class="question-text" id="q-text"></p>
+                <div class="options" id="options-container"></div>
+                <div id="feedback" class="feedback"></div>
+            </div>
+            <button class="btn btn-next" id="btn-next" onclick="nextQuestion()" disabled>Siguiente</button>
+        </div>
+    </section>
+
+    <section id="resultados" class="hidden">
+        <div class="results-box">
+            <h2>Resultado para <span id="student-name-display"></span></h2>
+            <div class="score-circle" id="final-score">0%</div>
+            <div id="personal-message" style="margin: 20px 0; font-size: 1.1rem;"></div>
+            <button class="btn" onclick="location.reload()">Reiniciar Actividad</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    function shuffle(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    const questions = [
+        // ==================== TEORÍA BÁSICA DE CONJUNTOS ====================
+        {
+            q: "Un conjunto \\(A\\) se dice <strong>finito</strong> si:",
+            options: [
+                "Existe un entero \\(n\\) tal que \\(A\\) tiene exactamente \\(n\\) elementos",
+                "Sus elementos son todos números enteros",
+                "No se pueden listar sus elementos",
+                "Tiene infinitos elementos pero se pueden enumerar"
+            ],
+            correctAnswer: "Existe un entero \\(n\\) tal que \\(A\\) tiene exactamente \\(n\\) elementos",
+            explanation: "Un conjunto es finito si su cardinalidad \\(|A|\\) es un número natural (incluyendo 0 para el conjunto vacío). Es decir, se puede establecer una biyección con \\(\\{1, 2, \\ldots, n\\}\\) para algún \\(n \\in \\mathbb{N}\\)."
+        },
+        {
+            q: "¿Cuál de los siguientes es un ejemplo de conjunto <strong>infinito no contable</strong>?",
+            options: [
+                "El intervalo \\([0,1]\\)",
+                "El conjunto de los números naturales \\(\\mathbb{N}\\)",
+                "El conjunto de los números racionales \\(\\mathbb{Q}\\)",
+                "El conjunto \\(\\{1, 2, 3, \\ldots\\}\\)"
+            ],
+            correctAnswer: "El intervalo \\([0,1]\\)",
+            explanation: "El intervalo \\([0,1]\\) es infinito no contable (no se puede establecer una biyección con \\(\\mathbb{N}\\), por el argumento diagonal de Cantor). Los naturales y racionales sí son contables."
+        },
+        {
+            q: "Un conjunto \\(A\\) es <strong>contablemente infinito</strong> si:",
+            options: [
+                "Existe una biyección entre \\(A\\) y \\(\\mathbb{N}\\)",
+                "Existe una biyección entre \\(A\\) y \\(\\mathbb{R}\\)",
+                "\\(A\\) tiene un número finito de elementos",
+                "\\(A\\) es un subconjunto propio de \\(\\mathbb{R}\\) no enumerable"
+            ],
+            correctAnswer: "Existe una biyección entre \\(A\\) y \\(\\mathbb{N}\\)",
+            explanation: "Un conjunto es contablemente infinito si sus elementos se pueden poner en correspondencia uno a uno con los números naturales. Ejemplos: \\(\\mathbb{Z}\\), \\(\\mathbb{Q}\\)."
+        },
+        {
+            q: "Si \\(A = \\{1, 2, 3\\}\\) y \\(B = \\{2, 3, 4, 5\\}\\), entonces \\(A \\cup B\\) es:",
+            options: [
+                "\\(\\{1, 2, 3, 4, 5\\}\\)",
+                "\\(\\{2, 3\\}\\)",
+                "\\(\\{1, 4, 5\\}\\)",
+                "\\(\\{1, 2, 3, 2, 3, 4, 5\\}\\)"
+            ],
+            correctAnswer: "\\(\\{1, 2, 3, 4, 5\\}\\)",
+            explanation: "La unión \\(A \\cup B\\) contiene todos los elementos que están en \\(A\\), en \\(B\\), o en ambos (sin repetir): \\(\\{1,2,3,4,5\\}\\)."
+        },
+        {
+            q: "Si \\(A = \\{1, 2, 3\\}\\) y \\(B = \\{2, 3, 4, 5\\}\\), entonces \\(A \\cap B\\) es:",
+            options: [
+                "\\(\\{2, 3\\}\\)",
+                "\\(\\{1, 2, 3, 4, 5\\}\\)",
+                "\\(\\{1\\}\\)",
+                "\\(\\emptyset\\)"
+            ],
+            correctAnswer: "\\(\\{2, 3\\}\\)",
+            explanation: "La intersección \\(A \\cap B\\) contiene solo los elementos que están en ambos conjuntos simultáneamente: \\(\\{2, 3\\}\\)."
+        },
+        {
+            q: "La <strong>Ley de De Morgan</strong> establece que \\((A \\cup B)^c\\) es igual a:",
+            options: [
+                "\\(A^c \\cap B^c\\)",
+                "\\(A^c \\cup B^c\\)",
+                "\\(A \\cap B\\)",
+                "\\(A^c \\cup B\\)"
+            ],
+            correctAnswer: "\\(A^c \\cap B^c\\)",
+            explanation: "La primera Ley de De Morgan: el complemento de la unión es la intersección de los complementos: \\((A \\cup B)^c = A^c \\cap B^c\\). Análogamente, \\((A \\cap B)^c = A^c \\cup B^c\\)."
+        },
+        {
+            q: "Dos eventos \\(A\\) y \\(B\\) son <strong>mutuamente excluyentes</strong> si:",
+            options: [
+                "\\(A \\cap B = \\emptyset\\)",
+                "\\(A \\cup B = S\\)",
+                "\\(A^c \\cap B^c = \\emptyset\\)",
+                "\\(A \\subseteq B\\)"
+            ],
+            correctAnswer: "\\(A \\cap B = \\emptyset\\)",
+            explanation: "Dos eventos son mutuamente excluyentes (o disjuntos) si no pueden ocurrir simultáneamente, es decir, su intersección es vacía."
+        },
+        {
+            q: "Si \\(A \\cap B \\cap C = \\emptyset\\), ¿se puede concluir que \\(A\\), \\(B\\) y \\(C\\) son mutuamente excluyentes?",
+            options: [
+                "No, la exclusión mutua exige disyunción dos a dos",
+                "Sí, siempre",
+                "Sí, si además \\(A \\cup B \\cup C = S\\)",
+                "Solo si los tres conjuntos son finitos"
+            ],
+            correctAnswer: "No, la exclusión mutua exige disyunción dos a dos",
+            explanation: "Que la intersección triple sea vacía no implica que las intersecciones dos a dos sean vacías. Por ejemplo: \\(A=\\{1,2\\}, B=\\{2,3\\}, C=\\{1,3\\}\\) tiene \\(A\\cap B\\cap C=\\emptyset\\) pero ninguna pareja es disjunta."
+        },
+
+        // ==================== DIAGRAMAS DE VENN-EULER ====================
+        {
+            q: "En un diagrama de Venn con dos conjuntos \\(A\\) y \\(B\\) dentro del universo \\(S\\), la región que está fuera de ambos círculos representa:",
+            options: [
+                "\\((A \\cup B)^c = A^c \\cap B^c\\)",
+                "\\(A \\cap B\\)",
+                "\\(A \\cup B\\)",
+                "\\(A^c \\cup B^c\\)"
+            ],
+            correctAnswer: "\\((A \\cup B)^c = A^c \\cap B^c\\)",
+            explanation: "La región exterior a ambos círculos pero dentro del rectángulo universal representa los elementos que no están en \\(A\\) ni en \\(B\\), es decir, el complemento de la unión."
+        },
+        {
+            q: "En un diagrama de Venn con tres conjuntos, la región central donde se traslapan los tres círculos representa:",
+            options: [
+                "\\(A \\cap B \\cap C\\)",
+                "\\(A \\cup B \\cup C\\)",
+                "\\((A \\cup B \\cup C)^c\\)",
+                "\\(A^c \\cap B^c \\cap C^c\\)"
+            ],
+            correctAnswer: "\\(A \\cap B \\cap C\\)",
+            explanation: "La región donde los tres círculos se superponen contiene los elementos que pertenecen simultáneamente a \\(A\\), \\(B\\) y \\(C\\)."
+        },
+        {
+            q: "¿Cuántas regiones distintas tiene un diagrama de Venn con 3 conjuntos \\(A\\), \\(B\\), \\(C\\)?",
+            options: ["8", "6", "4", "3"],
+            correctAnswer: "8",
+            explanation: "Con \\(n\\) conjuntos, el diagrama de Venn tiene \\(2^n\\) regiones (cada elemento puede estar o no en cada conjunto). Para \\(n=3\\): \\(2^3=8\\) regiones."
+        },
+
+        // ==================== TÉCNICAS DE CONTEO ====================
+        {
+            q: "El <strong>principio multiplicativo</strong> establece que si una tarea se realiza en \\(k\\) etapas, con \\(n_1, n_2, \\ldots, n_k\\) opciones en cada etapa, el número total de formas es:",
+            options: [
+                "\\(n_1 \\times n_2 \\times \\cdots \\times n_k\\)",
+                "\\(n_1 + n_2 + \\cdots + n_k\\)",
+                "\\(n_1! + n_2! + \\cdots + n_k!\\)",
+                "\\(\\max(n_1, n_2, \\ldots, n_k)\\)"
+            ],
+            correctAnswer: "\\(n_1 \\times n_2 \\times \\cdots \\times n_k\\)",
+            explanation: "Si las etapas son independientes y secuenciales, el número total de resultados es el producto de las opciones en cada etapa."
+        },
+        {
+            q: "¿Cuántos resultados posibles tiene un torneo donde 4 jugadores se enfrentan en semifinales (1 vs 2, 3 vs 4), luego los ganadores juegan el campeonato y los perdedores la consolación?",
+            options: ["16", "8", "24", "12"],
+            correctAnswer: "16",
+            explanation: "Cada juego tiene 2 posibles ganadores. Hay 4 juegos en total (2 semifinales + campeonato + consolación), pero las semifinales determinan quién va a cada juego final. Total: \\(2 \\times 2 \\times 2 \\times 2 = 16\\)."
+        },
+        {
+            q: "Tres vehículos pasan sucesivamente por una intersección. Cada uno puede virar a la derecha (R), izquierda (L) o seguir de frente (S). ¿Cuántos resultados hay en el espacio muestral?",
+            options: ["27", "9", "6", "81"],
+            correctAnswer: "27",
+            explanation: "Cada vehículo tiene 3 opciones independientes. Por el principio multiplicativo: \\(3 \\times 3 \\times 3 = 3^3 = 27\\)."
+        },
+        {
+            q: "En el problema de los tres vehículos (R, L, S), ¿cuántos resultados tienen los tres vehículos en la misma dirección?",
+            options: ["3", "6", "9", "1"],
+            correctAnswer: "3",
+            explanation: "Los tres deben elegir la misma dirección: \\(\\{RRR, LLL, SSS\\}\\). Solo hay 3 posibilidades."
+        },
+        {
+            q: "En el problema de los tres vehículos (R, L, S), ¿cuántos resultados tienen los tres vehículos en direcciones diferentes?",
+            options: ["6", "3", "9", "27"],
+            correctAnswer: "6",
+            explanation: "Es el número de permutaciones de 3 elementos distintos: \\(3! = 6\\). Los resultados son: RLS, RSL, LRS, LSR, SRL, SLR."
+        },
+
+        // ==================== PERMUTACIONES Y COMBINACIONES ====================
+        {
+            q: "La fórmula del número de <strong>permutaciones</strong> de \\(n\\) objetos tomados de \\(r\\) en \\(r\\) es:",
+            options: [
+                "\\(P(n,r) = \\dfrac{n!}{(n-r)!}\\)",
+                "\\(C(n,r) = \\dfrac{n!}{r!(n-r)!}\\)",
+                "\\(n^r\\)",
+                "\\(\\dfrac{(n+r-1)!}{r!(n-1)!}\\)"
+            ],
+            correctAnswer: "\\(P(n,r) = \\dfrac{n!}{(n-r)!}\\)",
+            explanation: "Las permutaciones (u ordenaciones) cuentan arreglos donde el orden importa: se eligen \\(r\\) objetos de \\(n\\) sin repetición y el orden es relevante."
+        },
+        {
+            q: "La fórmula del número de <strong>combinaciones</strong> de \\(n\\) objetos tomados de \\(r\\) en \\(r\\) es:",
+            options: [
+                "\\(C(n,r) = \\dfrac{n!}{r!(n-r)!}\\)",
+                "\\(P(n,r) = \\dfrac{n!}{(n-r)!}\\)",
+                "\\(n^r\\)",
+                "\\(\\dfrac{n!}{r!}\\)"
+            ],
+            correctAnswer: "\\(C(n,r) = \\dfrac{n!}{r!(n-r)!}\\)",
+            explanation: "Las combinaciones cuentan subconjuntos donde el orden NO importa. Se divide el número de permutaciones entre \\(r!\\) para eliminar las repeticiones por orden."
+        },
+        {
+            q: "¿Cuántas formas hay de elegir 3 libros de un estante con 7 libros, si el orden de selección no importa?",
+            options: ["35", "210", "21", "84"],
+            correctAnswer: "35",
+            explanation: "Se usa la combinación: \\(C(7,3) = \\frac{7!}{3!\\cdot 4!} = \\frac{7\\times 6\\times 5}{3\\times 2\\times 1} = 35\\)."
+        },
+        {
+            q: "¿De cuántas formas se pueden sentar 5 personas en una fila de 5 sillas?",
+            options: ["120", "25", "60", "720"],
+            correctAnswer: "120",
+            explanation: "Es una permutación de 5 objetos: \\(5! = 5 \\times 4 \\times 3 \\times 2 \\times 1 = 120\\)."
+        },
+        {
+            q: "El número de <strong>combinaciones con repetición</strong> de \\(n\\) tipos de objetos tomados de \\(r\\) en \\(r\\) es:",
+            options: [
+                "\\(\\dfrac{(n+r-1)!}{r!(n-1)!}\\)",
+                "\\(\\dfrac{n!}{r!(n-r)!}\\)",
+                "\\(n^r\\)",
+                "\\(\\dfrac{n!}{(n-r)!}\\)"
+            ],
+            correctAnswer: "\\(\\dfrac{(n+r-1)!}{r!(n-1)!}\\)",
+            explanation: "Las combinaciones con repetición permiten elegir el mismo tipo más de una vez. Equivale a \\(C(n+r-1, r)\\). Ejemplo: elegir \\(r\\) bolas de \\(n\\) colores con reemplazo."
+        },
+        {
+            q: "¿Cuántas palabras distintas (con o sin sentido) se pueden formar con las letras de la palabra 'MATE'?",
+            options: ["24", "16", "12", "6"],
+            correctAnswer: "24",
+            explanation: "Las 4 letras son todas distintas, así que el número de permutaciones es \\(4! = 24\\)."
+        },
+        {
+            q: "En una votación secreta con 4 votos para A y 3 votos para B (7 votos totales), ¿cuántas secuencias de votación posibles existen?",
+            options: ["35", "7", "21", "120"],
+            correctAnswer: "35",
+            explanation: "Se eligen las 3 posiciones (de 7) donde van los votos B: \\(C(7,3) = \\frac{7!}{3!4!} = 35\\). Equivalentemente, \\(C(7,4) = 35\\)."
+        },
+
+        // ==================== PROBLEMAS DE ESPACIO MUESTRAL Y EVENTOS ====================
+        {
+            q: "Un sistema tiene 3 componentes que pueden funcionar (S) o fallar (F). El espacio muestral tiene:",
+            options: ["8 resultados", "6 resultados", "9 resultados", "4 resultados"],
+            correctAnswer: "8 resultados",
+            explanation: "Cada componente tiene 2 estados (S o F). Por el principio multiplicativo: \\(2^3 = 8\\) resultados: SSS, SSF, SFS, SFF, FSS, FSF, FFS, FFF."
+        },
+        {
+            q: "En el sistema de 3 componentes (S/F), si el evento \\(A\\) = 'exactamente dos funcionan', entonces \\(A\\) tiene:",
+            options: ["3 resultados", "4 resultados", "2 resultados", "6 resultados"],
+            correctAnswer: "3 resultados",
+            explanation: "\\(A = \\{SSF, SFS, FSS\\}\\). Se elige cuál de los 3 componentes falla: \\(C(3,1) = 3\\)."
+        },
+        {
+            q: "En el sistema de 3 componentes, si el evento \\(B\\) = 'al menos dos funcionan', entonces \\(B\\) es:",
+            options: [
+                "\\(\\{SSS, SSF, SFS, FSS\\}\\)",
+                "\\(\\{SSF, SFS, FSS\\}\\)",
+                "\\(\\{SSS, SSF, SFS, FSS, SFF, FSF, FFS\\}\\)",
+                "\\(\\{SSS\\}\\)"
+            ],
+            correctAnswer: "\\(\\{SSS, SSF, SFS, FSS\\}\\)",
+            explanation: "'Al menos dos' significa exactamente 2 o exactamente 3. Exactamente 3: {SSS}. Exactamente 2: {SSF, SFS, FSS}. Total: 4 resultados."
+        },
+        {
+            q: "Si \\(A_i\\) = 'la planta del sitio \\(i\\) se completa a tiempo' (\\(i=1,2,3\\)), la expresión \\(A_1 \\cap A_2^c \\cap A_3^c\\) significa:",
+            options: [
+                "Solo la planta del sitio 1 se completa a tiempo",
+                "Todas las plantas se completan a tiempo",
+                "Al menos una planta se completa a tiempo",
+                "Ninguna planta se completa a tiempo"
+            ],
+            correctAnswer: "Solo la planta del sitio 1 se completa a tiempo",
+            explanation: "\\(A_1\\) ocurre, \\(A_2^c\\) significa que la planta 2 NO se completa, y \\(A_3^c\\) que la planta 3 NO se completa. Por tanto, solo la planta 1 se completa."
+        },
+        {
+            q: "Si \\(A_i\\) = 'la planta del sitio \\(i\\) se completa a tiempo', la expresión para 'exactamente una planta se completa a tiempo' es:",
+            options: [
+                "\\((A_1\\cap A_2^c\\cap A_3^c)\\cup(A_1^c\\cap A_2\\cap A_3^c)\\cup(A_1^c\\cap A_2^c\\cap A_3)\\)",
+                "\\(A_1 \\cup A_2 \\cup A_3\\)",
+                "\\(A_1 \\cap A_2 \\cap A_3\\)",
+                "\\((A_1\\cup A_2\\cup A_3)^c\\)"
+            ],
+            correctAnswer: "\\((A_1\\cap A_2^c\\cap A_3^c)\\cup(A_1^c\\cap A_2\\cap A_3^c)\\cup(A_1^c\\cap A_2^c\\cap A_3)\\)",
+            explanation: "Exactamente una significa: (solo la 1) o (solo la 2) o (solo la 3). Cada caso se expresa como la intersección del evento con los complementos de los otros dos."
+        },
+        {
+            q: "Una familia de 3 personas visita una clínica con 3 estaciones. Cada persona elige una estación independientemente. ¿Cuántos resultados tiene el espacio muestral?",
+            options: ["27", "9", "6", "81"],
+            correctAnswer: "27",
+            explanation: "Cada una de las 3 personas tiene 3 opciones de estación. Por el principio multiplicativo: \\(3^3 = 27\\)."
+        },
+        {
+            q: "En el problema de la clínica con 3 personas y 3 estaciones, ¿cuántos resultados tienen a las tres personas en estaciones diferentes?",
+            options: ["6", "27", "9", "3"],
+            correctAnswer: "6",
+            explanation: "Es el número de permutaciones de 3 estaciones asignadas a 3 personas: \\(3! = 6\\). Los resultados son: (1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)."
+        },
+        {
+            q: "Un estudiante busca un libro y revisa libros uno por uno hasta encontrar una segunda impresión (libros 3, 4, 5 son segundas impresiones; libros 1, 2 son primeras). ¿Cuántos resultados tiene el espacio muestral si se detiene al encontrar la primera segunda impresión?",
+            options: ["15", "5", "10", "20"],
+            correctAnswer: "15",
+            explanation: "Los resultados posibles son: {3,4,5} (1 libro), {13,14,15,23,24,25} (2 libros), {123,124,125,213,214,215} (3 libros). Total: 3+6+6 = 15."
+        },
+        {
+            q: "Si \\(S\\) es el espacio muestral y \\(A \\subseteq S\\), el complemento de \\(A\\) se define como:",
+            options: [
+                "\\(A^c = S \\setminus A\\)",
+                "\\(A^c = A \\cap S\\)",
+                "\\(A^c = S \\cap A\\)",
+                "\\(A^c = \\emptyset\\)"
+            ],
+            correctAnswer: "\\(A^c = S \\setminus A\\)",
+            explanation: "El complemento de \\(A\\) contiene todos los elementos del espacio muestral \\(S\\) que NO pertenecen a \\(A\\). Se denota \\(A^c\\), \\(A'\\) o \\(\\bar{A}\\)."
+        },
+        {
+            q: "¿Cuál es la diferencia entre una <strong>permutación</strong> y una <strong>combinación</strong>?",
+            options: [
+                "En la permutación el orden importa; en la combinación no",
+                "En la combinación el orden importa; en la permutación no",
+                "No hay diferencia, son lo mismo",
+                "La permutación permite repetición y la combinación no"
+            ],
+            correctAnswer: "En la permutación el orden importa; en la combinación no",
+            explanation: "Permutación: ABC ≠ BCA (el orden distingue los arreglos). Combinación: {A,B,C} = {B,C,A} (solo importa qué elementos se eligen, no en qué orden)."
+        }
+    ];
+
+    let currentQ = 0;
+    let correctCount = 0;
+    let errorCount = 0;
+    let studentName = "";
+    let answered = false;
+    let currentOptions = [];
+    let currentCorrectAnswer = "";
+    const MAX_ERRORS = 3;
+
+    const fechaInput = document.getElementById('fecha');
+    if (fechaInput) {
+        const hoy = new Date();
+        fechaInput.value = hoy.toISOString().split('T')[0];
+    }
+
+    function startQuiz() {
+        const nameInput = document.getElementById('nombre').value.trim();
+        const dateInput = document.getElementById('fecha').value;
+        if(!nameInput || !dateInput) {
+            alert("Por favor, ingresa tu nombre y la fecha.");
+            return;
+        }
+        studentName = nameInput;
+        document.getElementById('registro').classList.add('hidden');
+        document.getElementById('actividad').classList.remove('hidden');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        answered = false;
+        const q = questions[currentQ];
+        document.getElementById('q-text').innerHTML = `<strong>Pregunta ${currentQ + 1} de ${questions.length}:</strong><br>${q.q}`;
+        
+        currentOptions = shuffle(q.options);
+        currentCorrectAnswer = q.correctAnswer;
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        currentOptions.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `${String.fromCharCode(97 + i)}) ${opt}`;
+            btn.onclick = () => selectOption(opt, btn);
+            container.appendChild(btn);
+        });
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('btn-next').disabled = true;
+        updateStats();
+
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise();
+        }
+    }
+
+    function selectOption(optionText, btn) {
+        if(answered) return;
+        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        document.getElementById('btn-next').disabled = false;
+        btn.dataset.option = optionText;
+    }
+
+    function nextQuestion() {
+        if(!answered) {
+            const selected = document.querySelector('.option-btn.selected');
+            if(!selected) {
+                alert("Por favor, selecciona una respuesta antes de continuar.");
+                return;
+            }
+            const selectedText = selected.dataset.option;
+            checkAnswer(selectedText);
+            answered = true;
+            document.getElementById('btn-next').innerText = (currentQ < questions.length - 1) ? "Siguiente Pregunta" : "Finalizar";
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        } else {
+            currentQ++;
+            if(currentQ < questions.length) {
+                loadQuestion();
+                document.getElementById('btn-next').innerText = "Siguiente";
+            } else {
+                showResults();
+            }
+        }
+    }
+
+    function checkAnswer(selectedText) {
+        const q = questions[currentQ];
+        const isCorrect = selectedText === currentCorrectAnswer;
+        const feedback = document.getElementById('feedback');
+        const btns = document.querySelectorAll('.option-btn');
+
+        btns.forEach(b => {
+            b.classList.add('disabled');
+            if (b.dataset.option === currentCorrectAnswer) {
+                b.classList.add('correct');
+            }
+        });
+
+        if(isCorrect) {
+            correctCount++;
+            feedback.className = "feedback correct";
+            feedback.innerHTML = "<strong>¡Excelente!</strong> " + q.explanation;
+        } else {
+            errorCount++;
+            btns.forEach(b => {
+                if (b.dataset.option === selectedText) {
+                    b.classList.add('incorrect');
+                }
+            });
+            feedback.className = "feedback incorrect";
+            feedback.innerHTML = "<strong>Incorrecto.</strong> " + q.explanation;
+
+            if(errorCount >= MAX_ERRORS) {
+                setTimeout(() => {
+                    alert(`Has alcanzado el límite de ${MAX_ERRORS} errores. Te recomendamos repasar: teoría de conjuntos, operaciones entre conjuntos, Leyes de De Morgan, principio multiplicativo, permutaciones y combinaciones.`);
+                    location.reload();
+                }, 1500);
+            }
+        }
+        feedback.style.display = 'block';
+        updateStats();
+    }
+
+    function updateStats() {
+        document.getElementById('correct-count').innerText = correctCount;
+        document.getElementById('error-count').innerText = errorCount;
+        const prog = Math.round((currentQ / questions.length) * 100);
+        document.getElementById('progress-pct').innerText = prog + "%";
+        document.getElementById('progress-bar').style.width = prog + "%";
+    }
+
+    function showResults() {
+        document.getElementById('actividad').classList.add('hidden');
+        document.getElementById('resultados').classList.remove('hidden');
+        document.getElementById('student-name-display').innerText = studentName;
+        const score = Math.round((correctCount / questions.length) * 100);
+        document.getElementById('final-score').innerText = score + "%";
+
+        let msg = score >= 80 ?
+            "¡Excelente trabajo! Dominas la teoría básica de conjuntos, diagramas de Venn, técnicas de conteo, permutaciones y combinaciones." :
+            "Buen esfuerzo. Te sugerimos repasar: operaciones entre conjuntos (unión, intersección, complemento), Leyes de De Morgan, principio multiplicativo, permutaciones sin repetición, combinaciones con y sin repetición, y la construcción de espacios muestrales.";
+        document.getElementById('personal-message').innerText = msg;
+    }
+</script>
+</body>
+</html>
